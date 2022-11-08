@@ -3,7 +3,7 @@ import threading
 
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 5566
+PORT = 8000
 ADDR = (IP, PORT)
 SIZE = 1024
 FORMAT = "utf-8"
@@ -15,15 +15,18 @@ def handle_client(conn, addr):
     connected = True
     while connected:
         msg = conn.recv(SIZE).decode(FORMAT)
-        if msg == DISCONNECT_MSG:
-            connected = False
-
-        print(f"[{addr}] {msg}")
-        # msg = f"Msg received: {msg}"
-        conn.send(msg.encode(FORMAT))
+        if msg :
+            with open('holamundo.html', 'r') as file:
+                page_data= file.read()
+                print(page_data)
+                file.close()
+                conn.send(b"HTTP/1.0 200 OK\r\n")
+                conn.send(b'Content-Type: text/html\n')
+                conn.send(b'\n')
+                conn.send(page_data.encode())
+                return
 
     conn.close()
-
 def main():
     print("[Iniciando] El servidor esta iniciando...")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
